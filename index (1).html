@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Notes</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fef3c7;
+}
+
+header {
+  background: #f59e0b;
+  padding: 15px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #78350f;
+}
+
+.container {
+  padding: 15px;
+}
+
+.page {
+  background: #fff7ed;
+  border-radius: 15px;
+  padding: 15px;
+  min-height: 400px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+textarea {
+  width: 100%;
+  height: 350px;
+  border: none;
+  resize: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+}
+
+.controls {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  background: #fb923c;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+}
+
+.page-number {
+  text-align: center;
+  margin-top: 10px;
+  color: #78350f;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>Private Notes</header>
+
+<div class="container">
+  <div class="page">
+    <textarea id="text"></textarea>
+  </div>
+
+  <div class="controls">
+    <button onclick="prevPage()">Anterior</button>
+    <button onclick="nextPage()">Próxima</button>
+  </div>
+
+  <div class="page-number" id="pageNumber"></div>
+</div>
+
+<script>
+let currentPage = 0;
+let notes = JSON.parse(localStorage.getItem("notes_pages")) || [];
+
+// garante muitas páginas
+if (notes.length < 200000) {
+  for (let i = notes.length; i < 200000; i++) {
+    notes[i] = "";
+  }
+}
+
+function loadPage() {
+  document.getElementById("text").value = notes[currentPage];
+  document.getElementById("pageNumber").innerText = 
+    "Página " + (currentPage + 1);
+}
+
+function savePage() {
+  notes[currentPage] = document.getElementById("text").value;
+  localStorage.setItem("notes_pages", JSON.stringify(notes));
+}
+
+function nextPage() {
+  savePage();
+  currentPage++;
+  loadPage();
+}
+
+function prevPage() {
+  if (currentPage > 0) {
+    savePage();
+    currentPage--;
+    loadPage();
+  }
+}
+
+// salva automático enquanto digita
+document.getElementById("text").addEventListener("input", savePage);
+
+loadPage();
+</script>
+
+</body>
+</html>
